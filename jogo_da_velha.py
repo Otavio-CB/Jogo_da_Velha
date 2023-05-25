@@ -1,5 +1,6 @@
 import pygame
 import sys
+import random
 
 # Inicialização do Pygame
 pygame.init()
@@ -81,10 +82,8 @@ def verificar_vencedor():
 # Função para reiniciar o jogo
 def reiniciar_jogo():
     global tabuleiro
-    global jogador_atual
 
     tabuleiro = [[" " for _ in range(3)] for _ in range(3)]
-    jogador_atual = "X"
 
 # Variável para controle do jogador atual
 jogador_atual = "X"
@@ -97,7 +96,7 @@ while jogando:
         if evento.type == pygame.QUIT:
             jogando = False
             sys.exit()
-        elif evento.type == pygame.MOUSEBUTTONDOWN:
+        elif evento.type == pygame.MOUSEBUTTONDOWN and jogador_atual == "X":
             # Verificação do clique do mouse
             linha = evento.pos[1] // tamanho_quadrado
             coluna = evento.pos[0] // tamanho_quadrado
@@ -118,11 +117,19 @@ while jogando:
 
                     reiniciar_jogo()
                 else:
-                    # Troca do jogador atual
-                    if jogador_atual == "X":
-                        jogador_atual = "O"
-                    else:
-                        jogador_atual = "X"
+                    jogador_atual = "O"  # Troca para o computador jogar com "O"
+
+    # Jogada do computador (apenas se não houver um vencedor)
+    if jogador_atual == "O" and not verificar_vencedor():
+        linha = random.randint(0, 2)
+        coluna = random.randint(0, 2)
+
+        while tabuleiro[linha][coluna] != " ":
+            linha = random.randint(0, 2)
+            coluna = random.randint(0, 2)
+
+        tabuleiro[linha][coluna] = jogador_atual
+        jogador_atual = "X"  # Troca para o jogador jogar com "X" novamente
 
     # Desenho do tabuleiro na janela
     desenhar_tabuleiro()
